@@ -8,12 +8,14 @@
     body {
       margin: 0;
       overflow: hidden;
-      background-color: #70c5ce;
+      background: linear-gradient(to bottom, #70c5ce, #4ec0ca);
+      font-family: 'Arial', sans-serif;
     }
     canvas {
       display: block;
       margin: 0 auto;
-      background: #70c5ce;
+      background: url('https://raw.githubusercontent.com/samuelcust/flappy-bird-assets/master/sprites/background-day.png') repeat-x;
+      background-size: cover;
     }
   </style>
 </head>
@@ -23,14 +25,20 @@
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
 
-    // Load bird image
+    // Load images
     const birdImg = new Image();
     birdImg.src = 'https://raw.githubusercontent.com/samuelcust/flappy-bird-assets/master/sprites/yellowbird-midflap.png';
+    const pipeTopImg = new Image();
+    pipeTopImg.src = 'https://raw.githubusercontent.com/samuelcust/flappy-bird-assets/master/sprites/pipe-green-top.png';
+    const pipeBottomImg = new Image();
+    pipeBottomImg.src = 'https://raw.githubusercontent.com/samuelcust/flappy-bird-assets/master/sprites/pipe-green-bottom.png';
+    const baseImg = new Image();
+    baseImg.src = 'https://raw.githubusercontent.com/samuelcust/flappy-bird-assets/master/sprites/base.png';
 
     // Game variables
     let bird;
     let pipes;
-    let pipeWidth = 40;
+    let pipeWidth = 52;
     let pipeGap = 150;
     let frame = 0;
     let score = 0;
@@ -66,7 +74,7 @@
     // Create pipes
     function createPipe() {
       let topHeight = Math.floor(Math.random() * (canvas.height / 2));
-      let bottomHeight = canvas.height - topHeight - pipeGap;
+      let bottomHeight = canvas.height - topHeight - pipeGap - 80;
       pipes.push({
         x: canvas.width,
         topHeight,
@@ -90,7 +98,7 @@
         if (
           bird.x < pipes[i].x + pipeWidth &&
           bird.x + bird.width > pipes[i].x &&
-          (bird.y < pipes[i].topHeight || bird.y + bird.height > canvas.height - pipes[i].bottomHeight)
+          (bird.y < pipes[i].topHeight || bird.y + bird.height > canvas.height - pipes[i].bottomHeight - 80)
         ) {
           gameRunning = false;
           setTimeout(init, 1000); // Restart game after 1 second
@@ -104,7 +112,7 @@
       }
 
       // Check if bird hits the ground or top
-      if (bird.y + bird.height > canvas.height || bird.y < 0) {
+      if (bird.y + bird.height > canvas.height - 80 || bird.y < 0) {
         gameRunning = false;
         setTimeout(init, 1000); // Restart game after 1 second
       }
@@ -119,11 +127,13 @@
       ctx.drawImage(birdImg, bird.x, bird.y, bird.width, bird.height);
 
       // Draw the pipes
-      ctx.fillStyle = '#B22222'; // Brick red color
       for (let pipe of pipes) {
-        ctx.fillRect(pipe.x, 0, pipeWidth, pipe.topHeight);
-        ctx.fillRect(pipe.x, canvas.height - pipe.bottomHeight, pipeWidth, pipe.bottomHeight);
+        ctx.drawImage(pipeTopImg, pipe.x, pipe.topHeight - pipeTopImg.height);
+        ctx.drawImage(pipeBottomImg, pipe.x, canvas.height - pipe.bottomHeight);
       }
+
+      // Draw the base
+      ctx.drawImage(baseImg, 0, canvas.height - 80, canvas.width, 80);
 
       // Draw the score
       ctx.fillStyle = 'white';
