@@ -23,18 +23,21 @@
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
 
-    // Load bird image
+    // Load images
     const birdImg = new Image();
     birdImg.src = 'https://raw.githubusercontent.com/samuelcust/flappy-bird-assets/master/sprites/yellowbird-midflap.png';
+    const cloudImg = new Image();
+    cloudImg.src = 'https://raw.githubusercontent.com/samuelcust/flappy-bird-assets/master/sprites/cloud.png';
 
     // Game variables
     let bird;
     let pipes;
     let pipeWidth = 40;
-    let pipeGap = 100;
+    let pipeGap = 130;
     let frame = 0;
     let score = 0;
     let gameRunning = true;
+    let clouds = [];
 
     // Initialize game state
     function init() {
@@ -43,11 +46,16 @@
         y: 150,
         width: 34,
         height: 24,
-        gravity: 0.6,
-        lift: -10,
+        gravity: 0.4,
+        lift: -8,
         velocity: 0,
       };
       pipes = [];
+      clouds = [
+        { x: 100, y: 50 },
+        { x: 250, y: 100 },
+        { x: 400, y: 30 },
+      ];
       frame = 0;
       score = 0;
       gameRunning = true;
@@ -56,7 +64,7 @@
     // Control the bird with spacebar
     window.addEventListener('keydown', (e) => {
       if (e.code === 'Space') {
-        bird.velocity += bird.lift;
+        bird.velocity = bird.lift;
       }
     });
 
@@ -79,7 +87,7 @@
       bird.y += bird.velocity;
 
       // Update pipes and check collisions
-      if (frame % 90 === 0) createPipe();
+      if (frame % 100 === 0) createPipe();
       for (let i = pipes.length - 1; i >= 0; i--) {
         pipes[i].x -= 2;
 
@@ -100,6 +108,15 @@
         }
       }
 
+      // Update clouds
+      for (let cloud of clouds) {
+        cloud.x -= 0.5;
+        if (cloud.x + 50 < 0) {
+          cloud.x = canvas.width;
+          cloud.y = Math.random() * (canvas.height / 2);
+        }
+      }
+
       // Check if bird hits the ground or top
       if (bird.y + bird.height > canvas.height || bird.y < 0) {
         gameRunning = false;
@@ -111,6 +128,11 @@
     function draw() {
       // Clear the canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw the clouds
+      for (let cloud of clouds) {
+        ctx.drawImage(cloudImg, cloud.x, cloud.y, 50, 30);
+      }
 
       // Draw the bird
       ctx.drawImage(birdImg, bird.x, bird.y, bird.width, bird.height);
