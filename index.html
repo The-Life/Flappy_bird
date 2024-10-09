@@ -39,21 +39,21 @@
         y: 150,
         width: 20,
         height: 20,
-        gravity: 0.4,
+        gravity: 0.3,
         lift: -6,
         velocity: 0,
       };
       pipes = [];
       frame = 0;
       score = 0;
-      gameRunning = false;
+      gameRunning = true;
     }
 
     // Control the bird with spacebar
     window.addEventListener('keydown', (e) => {
       if (e.code === 'Space') {
         if (!gameRunning) {
-          gameRunning = true;
+          init();
         }
         bird.velocity = bird.lift;
       }
@@ -136,7 +136,7 @@
       requestAnimationFrame(loop);
     }
 
-    // Start the game
+    // Start the game loop
     init();
     loop();
   </script>
