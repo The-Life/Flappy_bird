@@ -38,6 +38,7 @@
     let score = 0;
     let gameRunning = true;
     let clouds = [];
+    let gameStarted = false;
 
     // Initialize game state
     function init() {
@@ -59,11 +60,16 @@
       frame = 0;
       score = 0;
       gameRunning = true;
+      gameStarted = false;
     }
 
     // Control the bird with spacebar
     window.addEventListener('keydown', (e) => {
       if (e.code === 'Space') {
+        if (!gameStarted) {
+          gameStarted = true;
+          gameRunning = true;
+        }
         bird.velocity = bird.lift;
       }
     });
@@ -87,7 +93,7 @@
       bird.y += bird.velocity;
 
       // Update pipes and check collisions
-      if (frame % 100 === 0) createPipe();
+      if (frame % 100 === 0 && gameStarted) createPipe();
       for (let i = pipes.length - 1; i >= 0; i--) {
         pipes[i].x -= 2;
 
@@ -145,9 +151,15 @@
       }
 
       // Draw the score
-      ctx.fillStyle = 'white';
-      ctx.font = '20px Arial';
-      ctx.fillText(`Score: ${score}`, 10, 25);
+      if (gameStarted) {
+        ctx.fillStyle = 'white';
+        ctx.font = '20px Arial';
+        ctx.fillText(`Score: ${score}`, 10, 25);
+      } else {
+        ctx.fillStyle = 'white';
+        ctx.font = '20px Arial';
+        ctx.fillText('Press Space to Start', canvas.width / 2 - 70, canvas.height / 2);
+      }
     }
 
     // Game loop
