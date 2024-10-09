@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-  <link rel="icon" href="data:;base64,=">
+<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Flappy Bird Game</title>
@@ -23,64 +23,36 @@
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
 
-    // Load images
-    const birdImg = new Image();
-    birdImg.src = 'https://raw.githubusercontent.com/samuelcust/flappy-bird-assets/master/sprites/yellowbird-midflap.png';
-    const cloudImg = new Image();
-    cloudImg.src = 'https://raw.githubusercontent.com/samuelcust/flappy-bird-assets/master/sprites/cloud.png';
-
-    let imagesLoaded = 0;
-
-    // Wait for images to load
-    birdImg.onload = () => { imagesLoaded++; checkImagesLoaded(); };
-    cloudImg.onload = () => { imagesLoaded++; checkImagesLoaded(); };
-
-    function checkImagesLoaded() {
-      if (imagesLoaded === 2) {
-        init();
-        loop();
-      }
-    }
-
     // Game variables
     let bird;
     let pipes;
     let pipeWidth = 40;
-    let pipeGap = 130;
+    let pipeGap = 150;
     let frame = 0;
     let score = 0;
-    let gameRunning = true;
-    let clouds = [];
-    let gameStarted = false;
+    let gameRunning = false;
 
     // Initialize game state
     function init() {
       bird = {
         x: 50,
         y: 150,
-        width: 34,
-        height: 24,
+        width: 20,
+        height: 20,
         gravity: 0.4,
-        lift: -8,
+        lift: -6,
         velocity: 0,
       };
       pipes = [];
-      clouds = [
-        { x: 100, y: 50 },
-        { x: 250, y: 100 },
-        { x: 400, y: 30 },
-      ];
       frame = 0;
       score = 0;
-      gameRunning = true;
-      gameStarted = false;
+      gameRunning = false;
     }
 
     // Control the bird with spacebar
     window.addEventListener('keydown', (e) => {
       if (e.code === 'Space') {
-        if (!gameStarted) {
-          gameStarted = true;
+        if (!gameRunning) {
           gameRunning = true;
         }
         bird.velocity = bird.lift;
@@ -106,7 +78,7 @@
       bird.y += bird.velocity;
 
       // Update pipes and check collisions
-      if (frame % 100 === 0 && gameStarted) createPipe();
+      if (frame % 100 === 0) createPipe();
       for (let i = pipes.length - 1; i >= 0; i--) {
         pipes[i].x -= 2;
 
@@ -127,15 +99,6 @@
         }
       }
 
-      // Update clouds
-      for (let cloud of clouds) {
-        cloud.x -= 0.5;
-        if (cloud.x + 50 < 0) {
-          cloud.x = canvas.width;
-          cloud.y = Math.random() * (canvas.height / 2);
-        }
-      }
-
       // Check if bird hits the ground or top
       if (bird.y + bird.height > canvas.height || bird.y < 0) {
         gameRunning = false;
@@ -148,13 +111,9 @@
       // Clear the canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Draw the clouds
-      for (let cloud of clouds) {
-        ctx.drawImage(cloudImg, cloud.x, cloud.y, 50, 30);
-      }
-
       // Draw the bird
-      ctx.drawImage(birdImg, bird.x, bird.y, bird.width, bird.height);
+      ctx.fillStyle = 'yellow';
+      ctx.fillRect(bird.x, bird.y, bird.width, bird.height);
 
       // Draw the pipes
       ctx.fillStyle = '#B22222'; // Brick red color
@@ -164,15 +123,9 @@
       }
 
       // Draw the score
-      if (gameStarted) {
-        ctx.fillStyle = 'white';
-        ctx.font = '20px Arial';
-        ctx.fillText(`Score: ${score}`, 10, 25);
-      } else {
-        ctx.fillStyle = 'white';
-        ctx.font = '20px Arial';
-        ctx.fillText('Press Space to Start', canvas.width / 2 - 70, canvas.height / 2);
-      }
+      ctx.fillStyle = 'white';
+      ctx.font = '20px Arial';
+      ctx.fillText(`Score: ${score}`, 10, 25);
     }
 
     // Game loop
@@ -182,6 +135,10 @@
       frame++;
       requestAnimationFrame(loop);
     }
+
+    // Start the game
+    init();
+    loop();
   </script>
 </body>
 </html>
