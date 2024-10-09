@@ -28,22 +28,30 @@
     birdImg.src = 'https://raw.githubusercontent.com/samuelcust/flappy-bird-assets/master/sprites/yellowbird-midflap.png';
 
     // Game variables
-    let bird = {
-      x: 50,
-      y: 150,
-      width: 34,
-      height: 24,
-      gravity: 0.6,
-      lift: -10,
-      velocity: 0,
-    };
-
-    let pipes = [];
+    let bird;
+    let pipes;
     let pipeWidth = 40;
     let pipeGap = 100;
     let frame = 0;
     let score = 0;
     let gameRunning = true;
+
+    // Initialize game state
+    function init() {
+      bird = {
+        x: 50,
+        y: 150,
+        width: 34,
+        height: 24,
+        gravity: 0.6,
+        lift: -10,
+        velocity: 0,
+      };
+      pipes = [];
+      frame = 0;
+      score = 0;
+      gameRunning = true;
+    }
 
     // Control the bird with spacebar
     window.addEventListener('keydown', (e) => {
@@ -82,6 +90,7 @@
           (bird.y < pipes[i].topHeight || bird.y + bird.height > canvas.height - pipes[i].bottomHeight)
         ) {
           gameRunning = false;
+          setTimeout(init, 1000); // Restart game after 1 second
         }
 
         // Remove pipes that have left the screen
@@ -94,6 +103,7 @@
       // Check if bird hits the ground or top
       if (bird.y + bird.height > canvas.height || bird.y < 0) {
         gameRunning = false;
+        setTimeout(init, 1000); // Restart game after 1 second
       }
     }
 
@@ -127,6 +137,7 @@
     }
 
     // Start the game
+    init();
     loop();
   </script>
 </body>
