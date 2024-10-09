@@ -29,6 +29,19 @@
     const cloudImg = new Image();
     cloudImg.src = 'https://raw.githubusercontent.com/samuelcust/flappy-bird-assets/master/sprites/cloud.png';
 
+    let imagesLoaded = 0;
+
+    // Wait for images to load
+    birdImg.onload = () => { imagesLoaded++; checkImagesLoaded(); };
+    cloudImg.onload = () => { imagesLoaded++; checkImagesLoaded(); };
+
+    function checkImagesLoaded() {
+      if (imagesLoaded === 2) {
+        init();
+        loop();
+      }
+    }
+
     // Game variables
     let bird;
     let pipes;
@@ -169,10 +182,6 @@
       frame++;
       requestAnimationFrame(loop);
     }
-
-    // Start the game
-    init();
-    loop();
   </script>
 </body>
 </html>
