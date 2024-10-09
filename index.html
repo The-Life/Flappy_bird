@@ -37,6 +37,21 @@
     const baseImg = new Image();
     baseImg.src = 'https://raw.githubusercontent.com/samuelcust/flappy-bird-assets/master/sprites/base.png';
 
+    let imagesLoaded = 0;
+
+    // Wait for images to load
+    birdImg.onload = () => { imagesLoaded++; checkImagesLoaded(); };
+    pipeTopImg.onload = () => { imagesLoaded++; checkImagesLoaded(); };
+    pipeBottomImg.onload = () => { imagesLoaded++; checkImagesLoaded(); };
+    baseImg.onload = () => { imagesLoaded++; checkImagesLoaded(); };
+
+    function checkImagesLoaded() {
+      if (imagesLoaded === 4) {
+        init();
+        loop();
+      }
+    }
+
     // Game variables
     let bird;
     let pipes;
@@ -150,10 +165,6 @@
       frame++;
       requestAnimationFrame(loop);
     }
-
-    // Start the game loop
-    init();
-    loop();
   </script>
 </body>
 </html>
